@@ -1,0 +1,288 @@
+#---------------------------------------------------#
+## 配置文件需要放置在 $HOME/.config/clash/config.yml
+##
+## 如果您不知道如何操作，请参阅 SS-Rule-Snippet 的 Wiki： https://github.com/Hackl0us/SS-Rule-Snippet/wiki/clash(X)
+#---------------------------------------------------#
+proxy-providers:
+  🛫 我的机场:
+    type: http
+    # 修改为你的 Clash 订阅链接
+    url: "https://example.com/xxx/xxx&flag=clash"
+    path: ./proxies/airport.yaml
+    interval: 43200
+    filter: "🇭🇰|🇹🇼|🇯🇵|🇰🇷|🇸🇬|🇺🇸"
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 600
+
+# HTTP 代理端口
+port: 7890
+
+# SOCKS5 代理端口
+socks-port: 7891
+
+# 允许局域网的连接（可用来共享代理）
+allow-lan: false
+
+# 规则模式：Rule（规则） / Global（全局代理）/ Direct（全局直连）
+mode: rule 
+
+# 设置日志输出级别 (默认级别：silent，即不输出任何内容，以避免因日志内容过大而导致程序内存溢出）。
+# 5 个级别：silent / info / warning / error / debug。级别越高日志输出量越大，越倾向于调试，若需要请自行开启。
+log-level: silent
+
+# clash 的 RESTful API
+external-controller: 127.0.0.1:9090
+
+# 您可以将静态网页资源（如 clash-dashboard）放置在一个目录中，clash 将会服务于 `${API}/ui`
+# 参数应填写配置目录的相对路径或绝对路径。
+# external-ui: folder
+
+# RESTful API 的口令 (可选)
+secret: ""
+
+dns:
+    enable: true
+    ipv6: false
+    # listen: 0.0.0.0:53
+    # enhanced-mode: redir-host
+    nameserver:
+        - 1.2.4.8
+        - 114.114.114.114
+        - 223.5.5.5
+        - tls://dns.rubyfish.cn:853
+
+proxies:
+  - name: 🆓 免费节点
+    type: vless
+    server: example.com
+    port: 443
+    uuid: {uuid}
+    network: ws
+    tls: true
+    udp: false
+    sni: example.com
+    client-fingerprint: chrome
+    ws-opts:
+      path: "/?ed=2048"
+      headers:
+        host: example.com
+
+
+
+proxy-groups:
+  - {name: 🚀 节点选择, type: select, proxies: [🇭🇰 香港节点, 🆓 免费节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点, 🇺🇸 美国节点]}
+  - {name: 📈 网络测试, type: select, proxies: [🎯 全球直连, 🇭🇰 香港节点, 🆓 免费节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点, 🇺🇸 美国节点]}
+  # 若机场的 UDP 质量不是很好，导致某游戏无法登录或进入房间，可以添加 `disable-udp: true` 配置项解决
+  - {name: 🐟 漏网之鱼, type: select, proxies: [🚀 节点选择, 🎯 全球直连], disable-udp: true}
+  - {name: 🔗 直连域名, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
+  - {name: 🪜 代理域名, type: select, proxies: [🚀 节点选择, 🎯 全球直连], disable-udp: true}
+  - {name: Ⓜ️ 微软服务, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
+  - {name: 📢 谷歌服务, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
+  - {name: 🍎 苹果服务, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
+  - {name: 知乎, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
+  - {name: B站, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
+  - {name: 米游社, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
+  - {name: javdb, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
+  - {name: 🇨🇳 国内 IP, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
+  - {name: 国内网站, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
+  - {name: 📲 电报消息, type: select, proxies: [🚀 节点选择]}
+  - {name: Guthub, type: select, proxies:  [🎯 全球直连, 🚀 节点选择]}
+  - {name: 🔒 局域网, type: select, proxies: [🎯 全球直连]}
+  - {name: 🛑 广告拦截, type: select, proxies: [REJECT]}
+  - {name: 🎯 全球直连, type: select, proxies: [DIRECT]}
+
+  # 采用节点负载均衡策略，优点是更稳定，速度可能有提升；推荐在节点复用比较多的情况下使用
+  - {name: 🇭🇰 香港节点, type: load-balance, strategy: consistent-hashing, lazy: true, use: [🛫 我的机场], filter: "🇭🇰"}
+  - {name: 🇹🇼 台湾节点, type: load-balance, strategy: consistent-hashing, lazy: true, use: [🛫 我的机场], filter: "🇹🇼"}
+  - {name: 🇯🇵 日本节点, type: load-balance, strategy: consistent-hashing, lazy: true, use: [🛫 我的机场], filter: "🇯🇵"}
+  - {name: 🇰🇷 韩国节点, type: load-balance, strategy: consistent-hashing, lazy: true, use: [🛫 我的机场], filter: "🇰🇷"}
+  - {name: 🇸🇬 新加坡节点, type: load-balance, strategy: consistent-hashing, lazy: true, use: [🛫 我的机场], filter: "🇸🇬"}
+  - {name: 🇺🇸 美国节点, type: load-balance, strategy: consistent-hashing, lazy: true, use: [🛫 我的机场], filter: "🇺🇸"}
+
+rule-providers:
+  ads:
+    type: http
+    behavior: domain
+    format: text
+    path: ./rules/ads.list
+    url: "https://github.com/Repcz/Tool/raw/X/Clash/Rules/Anti-ad.list"
+    interval: 86400
+
+  github:
+    type: http
+    behavior: classical
+    format: text
+    path: ./rules/github.list
+    url: "https://github.com/Repcz/Tool/raw/X/Clash/Rules/Github.list"
+    interval: 86400
+
+  Lan:
+    type: http
+    behavior: domain
+    format: text
+    path: ./rules/Lan.list
+    url: "https://raw.githubusercontent.com/Repcz/Tool/X/Clash/Rules/Lan.list"
+    interval: 86400
+
+  microsoft-cn:
+    type: http
+    behavior: domain
+    format: text
+    path: ./rules/microsoft-cn.list
+    url: "https://github.com/Repcz/Tool/raw/X/Clash/Rules/Microsoft.list"
+    interval: 86400
+
+  apple-cn:
+    type: http
+    behavior: domain
+    format: text
+    path: ./rules/apple-cn.list
+    url: "https://github.com/Repcz/Tool/raw/X/Clash/Rules/Apple.list"
+    interval: 86400
+
+  google-cn:
+    type: http
+    behavior: domain
+    format: text
+    path: ./rules/google-cn.list
+    url: "https://github.com/Repcz/Tool/raw/X/Clash/Rules/Google.list"
+    interval: 86400
+
+
+  proxy:
+    type: http
+    behavior: domain
+    format: text
+    path: ./rules/proxy.list
+    url: "https://github.com/Repcz/Tool/raw/X/Clash/Rules/ProxyGFW.list"
+    interval: 86400
+
+
+  telegramip:
+    type: http
+    behavior: ipcidr
+    format: text
+    path: ./rules/telegramip.list
+    url: "https://github.com/Repcz/Tool/raw/X/Clash/Rules/Telegram.list"
+    interval: 86400
+
+  cnip:
+    type: http
+    behavior: ipcidr
+    format: text
+    path: ./rules/cnip.list
+    url: "https://github.com/Repcz/Tool/raw/X/Clash/Rules/ChinaDomain.list"
+    interval: 86400
+
+  zhihu:
+    type: http
+    behavior: ipcidr
+    format: text
+    path: ./rules/zhihu.list
+    url: "https://raw.githubusercontent.com/njzybaby/ClashMetaForAndroid/main/rules/zhihu.list"
+    interval: 86400
+  
+  bilibili:
+    type: http
+    behavior: ipcidr
+    format: text
+    path: ./rules/bilibili.list
+    url: "https://raw.githubusercontent.com/njzybaby/ClashMetaForAndroid/main/rules/bilibili.list"
+    interval: 86400
+
+  miyoushe:
+    type: http
+    behavior: ipcidr
+    format: text
+    path: ./rules/miyoushe.list
+    url: "https://raw.githubusercontent.com/njzybaby/ClashMetaForAndroid/main/rules/miyoushe.list"
+    interval: 86400
+
+  javdb:
+    type: http
+    behavior: ipcidr
+    format: text
+    path: ./rules/javdb.list
+    url: "https://raw.githubusercontent.com/njzybaby/ClashMetaForAndroid/main/rules/javdb.list"
+    interval: 86400
+
+
+rules:
+    # Apple
+    - DOMAIN,hls.itunes.apple.com,Proxy
+    - DOMAIN,itunes.apple.com,Proxy
+    - DOMAIN,itunes.com,Proxy
+    - DOMAIN-SUFFIX,digicert.com,DIRECT
+    - DOMAIN-SUFFIX,icloud.com,DIRECT
+    - DOMAIN-SUFFIX,icloud-content.com,DIRECT
+    - DOMAIN-SUFFIX,mzstatic.com,DIRECT
+    - DOMAIN-SUFFIX,akadns.net,DIRECT
+    - DOMAIN-SUFFIX,aaplimg.com,DIRECT
+    - DOMAIN-SUFFIX,cdn-apple.com,DIRECT
+    - DOMAIN-SUFFIX,apple.com,DIRECT
+    #- DOMAIN,e.crashlytics.com,REJECT //注释此选项有助于大多数App开发者分析崩溃信息；如果您拒绝一切崩溃数据统计、搜集，请取消 # 注释。
+
+
+    # 自定义规则
+    ## 您可以在此处插入您补充的自定义规则
+    # 抗 DNS 污染
+    - DOMAIN-KEYWORD,amazon,Proxy
+    - DOMAIN-KEYWORD,google,Proxy
+    - DOMAIN-KEYWORD,gmail,Proxy
+    - DOMAIN-KEYWORD,youtube,Proxy
+    - DOMAIN-KEYWORD,facebook,Proxy
+    - DOMAIN-SUFFIX,fb.me,Proxy
+    - DOMAIN-SUFFIX,fbcdn.net,Proxy
+    - DOMAIN-KEYWORD,twitter,Proxy
+    - DOMAIN-KEYWORD,instagram,Proxy
+    - DOMAIN-KEYWORD,dropbox,Proxy
+    - DOMAIN-SUFFIX,twimg.com,Proxy
+    - DOMAIN-KEYWORD,blogspot,Proxy
+    - DOMAIN-SUFFIX,youtu.be,Proxy
+    - DOMAIN-KEYWORD,whatsapp,Proxy
+
+    # 常见广告域名屏蔽
+    - DOMAIN-KEYWORD,admarvel,REJECT
+    - DOMAIN-KEYWORD,admaster,REJECT
+    - DOMAIN-KEYWORD,adsage,REJECT
+    - DOMAIN-KEYWORD,adsmogo,REJECT
+    - DOMAIN-KEYWORD,adsrvmedia,REJECT
+    - DOMAIN-KEYWORD,adwords,REJECT
+    - DOMAIN-KEYWORD,adservice,REJECT
+    - DOMAIN-KEYWORD,domob,REJECT
+    - DOMAIN-KEYWORD,duomeng,REJECT
+    - DOMAIN-KEYWORD,dwtrack,REJECT
+    - DOMAIN-KEYWORD,guanggao,REJECT
+    - DOMAIN-KEYWORD,lianmeng,REJECT
+    - DOMAIN-KEYWORD,omgmta,REJECT
+    - DOMAIN-KEYWORD,openx,REJECT
+    - DOMAIN-KEYWORD,partnerad,REJECT
+    - DOMAIN-KEYWORD,pingfore,REJECT
+    - DOMAIN-KEYWORD,supersonicads,REJECT
+    - DOMAIN-KEYWORD,tracking,REJECT
+    - DOMAIN-KEYWORD,uedas,REJECT
+    - DOMAIN-KEYWORD,umeng,REJECT
+    - DOMAIN-KEYWORD,usage,REJECT
+    - DOMAIN-KEYWORD,wlmonitor,REJECT
+    - DOMAIN-KEYWORD,zjtoolbar,REJECT
+
+    # 分组策略
+
+    - RULE-SET,ads,🛑 广告拦截
+    - RULE-SET,github,Github
+    - RULE-SET,Lan,🔒 局域网
+    - RULE-SET,microsoft-cn,Ⓜ️ 微软服务
+    - RULE-SET,apple-cn,🍎 苹果服务
+    - RULE-SET,google-cn,📢 谷歌服务
+    - RULE-SET,proxy,🪜 代理域名
+    - RULE-SET,cn,🔗 直连域名
+    - RULE-SET,telegramip,📲 电报消息
+    - RULE-SET,zhihu,知乎
+    - RULE-SET,miyoushe,米游社
+    - RULE-SET,bilibili,B站
+    - RULE-SET,javdb,javdb
+    - RULE-SET,cnip,🇨🇳 国内 IP
+    - GEOIP,CN,国内网站
+    - MATCH,🐟 漏网之鱼
