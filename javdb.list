@@ -1,0 +1,5 @@
+# 针对javdb的Calsh分流规则
+# 注意营养。
+# https://github.com/njzybaby
+DOMAIN-SUFFIX,javdb.com
+DOMAIN-SUFFIX,jdbstatic.com

@@ -1,0 +1,4 @@
+# 针对知乎显示IP归属地的clash分流规则
+# 有需要则调整为Proxy或自定义策略，改完会造成正常访问知乎的速度变慢，没改IP归属地需求就别开。
+# https://github.com/njzybaby
+DOMAIN-SUFFIX,zhihu.com

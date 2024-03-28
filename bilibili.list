@@ -1,0 +1,8 @@
+# 针对米游社显示IP归属地的clash分流规则
+# 有需要则调整为Proxy或自定义策略，改完会造成正常访问米游社的速度变慢，没改IP归属地需求就别开。
+# https://github.com/njzybaby/QuntulumultX
+DOMAIN-SUFFIX,bilibili.com
+DOMAIN-SUFFIX,httpdns.bilivideo.com
+DOMAIN-SUFFIX,bilivideo.com
+DOMAIN-SUFFIX,biliapi.com
+DOMAIN-SUFFIX,biliapi.net
